@@ -1,0 +1,42 @@
+
+name: Build Upgrader 1.16.5
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 6.8.3
+
+      - name: Extract project
+        run: |
+          mkdir project
+          unzip -q *.zip -d project
+          ls -la project/Upgrader1165
+
+      - name: Build mod
+        run: |
+          cd project/Upgrader1165
+          gradle build
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: Upgrader-1.16.5
+          path: project/Upgrader1165/build/libs/*.jar
